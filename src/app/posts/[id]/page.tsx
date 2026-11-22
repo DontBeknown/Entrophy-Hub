@@ -6,19 +6,21 @@ import styles from "@/components/site.module.css";
 import { type Post, typeLabels } from "@/lib/demo";
 import { getCharacters, getPost, listUrl, type Query } from "@/lib/posts";
 
-function BodySection({ title, value, ordered = false }: { title: string; value?: string; ordered?: boolean }) {
+function BodySection({ title, value, ordered = false, nested = false }: {
+  title: string; value?: string; ordered?: boolean; nested?: boolean;
+}) {
   if (!value) return null;
+  const Heading = nested ? "h3" : "h2";
   return <section>
-    <h2>{title}</h2>
+    <Heading>{title}</Heading>
     {ordered ? <ol>{value.split(/\r?\n/).filter(Boolean).map((line, index) => <li key={index}>{line}</li>)}</ol>
       : <p className="prose">{value}</p>}
   </section>;
 }
 
 function Video({ post }: { post: Post }) {
-  if (post.video) return <VideoPlayer postId={post.id} />;
-  if (!post.demo_video) return null;
-  return <video className="post-video" controls preload="none" poster="/entropy-hero.png" src="/demo-preview.webm" aria-label="Demo video preview" />;
+  if (!post.video && !post.demo_video) return null;
+  return <VideoPlayer postId={post.id} demo={!post.video} />;
 }
 
 function PostBody({ post }: { post: Post }) {
@@ -45,8 +47,8 @@ function PostBody({ post }: { post: Post }) {
               key === "+" ? <span key={keyIndex}>+</span> : <kbd key={keyIndex}>{key}</kbd>)}</span>}
           </li>;
         })}</ol>
-        <BodySection title="Timing and positioning" value={body.timing} />
-        <BodySection title="Required upgrades" value={body.upgrades} />
+        <BodySection title="Timing and positioning" value={body.timing} nested />
+        <BodySection title="Required upgrades" value={body.upgrades} nested />
       </section>
     </div>;
     case "speedrun": return <>

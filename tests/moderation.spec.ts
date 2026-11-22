@@ -61,6 +61,10 @@ test("moderation is private, dismiss is non-destructive, and removal preserves r
 
       const pending = await admin!.from("reports").insert({ post_id: postId, reporter_id: author.id, reason: "Concurrent post removal." }).select("id").single();
       expect(pending.error).toBeNull();
+      const related = await admin!.from("reports").insert({
+        post_id: postId, reporter_id: moderator.id, reason: "Related pending report.",
+      }).select("id").single();
+      expect(related.error).toBeNull();
       const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
         auth: { autoRefreshToken: false, persistSession: false },
       });
@@ -71,6 +75,8 @@ test("moderation is private, dismiss is non-destructive, and removal preserves r
       expect((await request.get(postPath)).status()).toBe(404);
       const audit = await admin!.from("reports").select("decision,reviewed_by,reviewed_at").eq("id", pending.data!.id).single();
       expect(audit.data).toMatchObject({ decision: "remove", reviewed_by: moderator.id, reviewed_at: expect.any(String) });
+      const relatedAudit = await admin!.from("reports").select("decision,reviewed_by").eq("id", related.data!.id).single();
+      expect(relatedAudit.data).toMatchObject({ decision: "remove", reviewed_by: moderator.id });
     } finally {
       await modPage.close();
     }

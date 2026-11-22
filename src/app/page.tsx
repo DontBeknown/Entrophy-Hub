@@ -8,17 +8,18 @@ export default async function Home() {
     getCharacters(),
     listPosts({ q: "", character: "", sort: "newest", page: 1 }),
   ]);
+  const featured = ["ragna", "noel", "jin", "hakumen"].flatMap((slug) => characters.filter((character) => character.slug === slug));
   return <>
     <section className={styles.hero} aria-labelledby="hero-title"><div className={`container ${styles.heroInner}`}>
       <h1 id="hero-title" className={styles.rule}>Find your next build.</h1>
-      <p>Builds, tactics, combos, and speedruns.</p>
+      <p>Builds, tactics, combos, and speedruns for BlazBlue Entropy Effect.</p>
       <Search />
       <Link className="button" href="/characters">Choose a character</Link>
     </div></section>
     <div className="container">
       <section className="section" aria-labelledby="characters-title">
         <h2 id="characters-title" className={styles.heading}>Characters</h2>
-        <CharacterGrid items={characters.slice(0, 8)} />
+        <CharacterGrid items={featured.length ? featured : characters.slice(0, 4)} />
       </section>
       <section className="section" aria-labelledby="recent-title">
         <h2 id="recent-title" className={styles.heading}>Recent posts</h2>

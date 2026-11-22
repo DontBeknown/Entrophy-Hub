@@ -6,21 +6,35 @@ import { Upload } from "tus-js-client";
 import { reserveVideo } from "@/app/posts/video-actions";
 import { videoRules, type VideoType } from "@/lib/media";
 
-function readableVideo(file: File) {
-  return new Promise<boolean>((resolve) => {
+function previewFrame(file: File) {
+  return new Promise<string | null | undefined>((resolve) => {
     const video = document.createElement("video");
     const url = URL.createObjectURL(file);
-    const timer = window.setTimeout(() => finish(false), 10_000);
-    function finish(result: boolean) {
+    let readable = false;
+    const timer = window.setTimeout(() => finish(readable ? null : undefined), 10_000);
+    function finish(result: string | null | undefined) {
       window.clearTimeout(timer);
-      video.onloadedmetadata = video.onerror = null;
+      video.onloadeddata = video.onloadedmetadata = video.onerror = null;
       video.removeAttribute("src");
       URL.revokeObjectURL(url);
       resolve(result);
     }
-    video.preload = "metadata";
-    video.onloadedmetadata = () => finish(video.videoWidth > 0 && Number.isFinite(video.duration) && video.duration > 0);
-    video.onerror = () => finish(false);
+    video.preload = "auto";
+    video.onloadedmetadata = () => {
+      readable = video.videoWidth > 0 && Number.isFinite(video.duration) && video.duration > 0;
+      if (!readable) finish(undefined);
+    };
+    video.onloadeddata = () => {
+      const canvas = document.createElement("canvas");
+      const scale = Math.min(320 / video.videoWidth, 180 / video.videoHeight, 1);
+      canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+      canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+      const context = canvas.getContext("2d");
+      if (!context) { finish(null); return; }
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      finish(canvas.toDataURL("image/jpeg", 0.75).split(",")[1] || null);
+    };
+    video.onerror = () => finish(undefined);
     video.src = url;
   });
 }
@@ -67,11 +81,12 @@ export function VideoUpload({ type, existing, onChange }: {
       return;
     }
     try {
-      if (!(await readableVideo(selection))) {
+      const poster = await previewFrame(selection);
+      if (poster === undefined) {
         fail("This recording could not be read. Export it as H.264 MP4 and select it again.", true);
         return;
       }
-      const path = await reserveVideo(type, selection.size);
+      const path = await reserveVideo(type, selection.size, poster);
       if (!path) { fail("Could not start the upload. Try again."); return; }
       const client = createBrowserClient(url, key);
       upload.current = new Upload(selection, {

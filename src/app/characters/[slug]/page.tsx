@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PostList } from "@/components/site";
+import { CharacterPortrait, PostList } from "@/components/site";
 import { Pagination } from "@/components/discovery";
 import { postTypes, typeLabels } from "@/lib/demo";
 import { filtersFrom, getCharacters, listPosts, listUrl, type Query } from "@/lib/posts";
@@ -16,7 +16,10 @@ export default async function CharacterPage({ params, searchParams }: { params: 
   const editorUrl = listUrl("/posts/new", { character: slug, type: filters.type });
   return <div className="container page stack">
     <Link href="/characters">Characters</Link>
-    <h1>{character.name}</h1>
+    <header className="character-heading row">
+      <div className="character-badge"><CharacterPortrait character={character} compact /></div>
+      <h1>{character.name}</h1>
+    </header>
     <nav aria-label="Post types" className="row category-tabs">
       {[undefined, ...postTypes].map((type) =>
         <Link key={type ?? "all"} href={listUrl(path, { sort: filters.sort, type })}

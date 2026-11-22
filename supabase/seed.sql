@@ -1,6 +1,3 @@
-insert into public.characters (slug, name, color) values
-  ('ragna','Ragna','#ec407a'), ('noel','Noel','#4468ff'), ('jin','Jin','#7496ff'), ('hakumen','Hakumen','#9e88ed');
-
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, created_at, updated_at)
 values
   ('10000000-0000-4000-8000-000000000001','00000000-0000-0000-0000-000000000000','authenticated','authenticated','blade@example.invalid',now(),now(),now()),

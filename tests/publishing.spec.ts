@@ -45,11 +45,13 @@ test("sign-in returns to a prefilled editor and only the author can edit", async
 
 test("email confirmation restores the original return URL", async ({ page, request }) => {
   test.skip(!admin, "Requires local Supabase and Mailpit");
-  const email = `signup-${crypto.randomUUID()}@example.com`;
+  const token = crypto.randomUUID();
+  const email = `signup-${token}@example.com`;
+  const displayName = `Email Test ${token.slice(0, 8)}`;
   const next = "/posts/new?character=noel&type=build";
   try {
     await page.goto(`/sign-in?${new URLSearchParams({ mode: "signup", next })}`);
-    await page.getByLabel("Display name").fill("Email Test");
+    await page.getByLabel("Display name").fill(displayName);
     await page.getByLabel("Email").fill(email);
     await page.getByLabel("Password").fill("Local-test-password-2026");
     await page.getByRole("button", { name: "Create account" }).click();
@@ -70,8 +72,8 @@ test("email confirmation restores the original return URL", async ({ page, reque
     await expect(page.getByRole("heading", { name: "Create post" })).toBeVisible();
     await expect(page.getByRole("combobox", { name: "Character", exact: true })).toHaveValue("noel");
   } finally {
-    const users = await admin!.auth.admin.listUsers();
-    const user = users.data.users.find((entry) => entry.email === email);
-    if (user) await admin!.auth.admin.deleteUser(user.id);
+    const profile = await admin!.from("profiles").select("id").eq("display_name", displayName).maybeSingle();
+    expect(profile.error).toBeNull();
+    if (profile.data) expect((await admin!.auth.admin.deleteUser(profile.data.id)).error).toBeNull();
   }
 });

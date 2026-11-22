@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/site";
+import "@fontsource-variable/inter";
+import "@fontsource/russo-one/latin-400.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,6 +13,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return <html lang="en"><body>
     <a className="button skip" href="#main">Skip to content</a>
     <Header />
-    <main id="main">{children}</main>
+    <main id="main" tabIndex={-1}>{children}</main>
   </body></html>;
 }

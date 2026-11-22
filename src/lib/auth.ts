@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { database } from "./supabase";
 
 export function returnPath(path: unknown, fallback = "/") {
-  if (typeof path !== "string" || !path.startsWith("/") || /[\\\u0000-\u001f]/.test(path)) return fallback;
+  if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//") || /[\\\u0000-\u001f]/.test(path)) return fallback;
   const url = new URL(path, "https://entropy.invalid");
   if (url.origin !== "https://entropy.invalid" || url.pathname.startsWith("//")) return fallback;
   return url.pathname + url.search + url.hash;

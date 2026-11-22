@@ -40,7 +40,7 @@ export function listUrl(path: string, filters: Partial<Filters>) {
 export const getCharacters = cache(async (): Promise<Character[]> => {
   const db = await database();
   if (!db) return characters;
-  const { data, error } = await db.from("characters").select("slug,name,color").order("name");
+  const { data, error } = await db.from("characters").select("slug,name,color,portrait").order("name");
   if (error) throw error;
   return data;
 });

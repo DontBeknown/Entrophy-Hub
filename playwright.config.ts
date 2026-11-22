@@ -11,5 +11,6 @@ export default defineConfig({
     command: "node node_modules/next/dist/bin/next dev -H 127.0.0.1 -p 3211",
     url: "http://127.0.0.1:3211",
     timeout: 120_000,
+    env: { NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3211", CRON_SECRET: "entropy-hub-local-e2e-only" },
   },
 });

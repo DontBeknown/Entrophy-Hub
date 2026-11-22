@@ -72,6 +72,9 @@ test("a speedrun needs a recording and resumes a large direct upload", async ({ 
     await page.getByRole("button", { name: "Publish post" }).click();
     await expect(page.getByRole("heading", { name: "Recorded test run" })).toBeVisible();
     postId = new URL(page.url()).pathname.split("/").at(-1);
+    const thumbnail = await request.get(`/posts/${postId}/thumbnail`);
+    expect(thumbnail.headers()["content-type"]).toBe("image/jpeg");
+    expect((await thumbnail.body()).subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
     const playback = page.waitForResponse((response) => response.url().includes(`/posts/${postId}/video`));
     await page.getByRole("button", { name: "Play video" }).click();
     const signed = await playback;
@@ -87,6 +90,24 @@ test("a speedrun needs a recording and resumes a large direct upload", async ({ 
     await page.getByRole("button", { name: "Clear selection" }).click();
     await page.getByRole("button", { name: "Save changes" }).click();
     await expect(page.getByRole("button", { name: "Play video" })).toBeVisible();
+    await page.goto("/posts/new?character=ragna&type=combo");
+    await page.getByLabel("Select video file").setInputFiles(file);
+    await expect(page.locator("main").getByRole("alert")).toContainText("50 MiB");
+
+    const role = await admin!.from("moderators").insert({ user_id: owner.id });
+    expect(role.error).toBeNull();
+    const report = await admin!.from("reports").insert({ post_id: postId, reporter_id: owner.id, reason: "Remove recording test." }).select("id").single();
+    expect(report.error).toBeNull();
+    await page.goto("/moderator/reports");
+    const queueItem = page.getByRole("article").filter({ hasText: "Remove recording test." });
+    await queueItem.getByRole("button", { name: "Remove post" }).click();
+    await page.getByRole("button", { name: "Remove content" }).click();
+    await expect(queueItem).toHaveCount(0);
+    expect((await request.get(`/posts/${postId}/thumbnail`)).status()).toBe(404);
+    expect((await request.get(`/posts/${postId}/video`)).status()).toBe(404);
+    const reservation = await admin!.from("media_uploads").select("attached,expires_at").eq("owner_id", owner.id).single();
+    expect(reservation.data?.attached).toBe(false);
+    expect(new Date(reservation.data!.expires_at).getTime()).toBeGreaterThan(Date.now());
   } finally {
     const { data } = await admin!.from("media_uploads").select("path").eq("owner_id", owner.id);
     if (data?.length) await admin!.storage.from("speedrun-recordings").remove(data.map(({ path }) => path));

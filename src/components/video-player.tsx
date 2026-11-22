@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-export function VideoPlayer({ postId }: { postId: string }) {
+export function VideoPlayer({ postId, demo = false }: { postId: string; demo?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
   const position = useRef(0);
   const [started, setStarted] = useState(false);
@@ -16,9 +16,12 @@ export function VideoPlayer({ postId }: { postId: string }) {
     setLoading(true);
     setError(false);
     try {
-      const response = await fetch(`/posts/${postId}/video`, { cache: "no-store" });
-      if (!response.ok) throw new Error("Video is temporarily unavailable.");
-      const { url } = await response.json() as { url: string };
+      let url = "/demo-preview.webm";
+      if (!demo) {
+        const response = await fetch(`/posts/${postId}/video`, { cache: "no-store" });
+        if (!response.ok) throw new Error("Video is temporarily unavailable.");
+        ({ url } = await response.json() as { url: string });
+      }
       element.src = url;
       setStarted(true);
       await element.play().catch(() => {});
@@ -30,8 +33,8 @@ export function VideoPlayer({ postId }: { postId: string }) {
   }
 
   return <div className="media-player">
-    <video ref={video} className="post-video" controls={started} preload="none" poster="/entropy-hero.png"
-      aria-label="Post recording" onError={() => setError(true)} onLoadedMetadata={() => {
+    <video ref={video} className="post-video" controls={started} preload="none" poster={demo ? "/entropy-hero.webp" : `/posts/${postId}/thumbnail`}
+      aria-label={demo ? "Demo video preview" : "Post recording"} onError={() => setError(true)} onLoadedMetadata={() => {
         if (video.current && position.current < video.current.duration) video.current.currentTime = position.current;
       }} />
     {(!started || error) && <button type="button" className="button media-player-button" disabled={loading} onClick={load}>
