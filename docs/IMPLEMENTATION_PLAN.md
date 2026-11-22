@@ -12,7 +12,7 @@ The [product brief](PRODUCT_BRIEF.md) defines the release scope. The [UI design]
 | 6. Moderation | Reports, private queue, dismiss/remove, and audit fields | Access control, confirmation, retained replies, and concurrent review |
 | 7. Release prep | Launch roster, accessibility checks, scheduler, and deployment instructions | Full local suite, then staging smoke test before public rollout |
 
-Run lint, type checking, the production build, and the browser suite before each phase commit. The [README](README.md) contains the local and hosted setup steps.
+Run lint, type checking, the production build, and the browser suite before each phase commit. The [developer guide](DEVELOPMENT.md) contains the local and hosted setup steps.
 
 ## Commit sequence
 
