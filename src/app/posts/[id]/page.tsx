@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { VideoPlayer } from "@/components/video-player";
+import { Discussion } from "@/components/discussion";
+import styles from "@/components/site.module.css";
 import { type Post, typeLabels } from "@/lib/demo";
-import { getCharacters, getPost, listUrl } from "@/lib/posts";
+import { getCharacters, getPost, listUrl, type Query } from "@/lib/posts";
 
 function BodySection({ title, value, ordered = false }: { title: string; value?: string; ordered?: boolean }) {
   if (!value) return null;
@@ -57,7 +59,7 @@ function PostBody({ post }: { post: Post }) {
   }
 }
 
-export default async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
+export default async function PostDetail({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
   const { id } = await params;
   const [post, roster] = await Promise.all([getPost(id), getCharacters()]);
   if (!post) notFound();
@@ -69,11 +71,12 @@ export default async function PostDetail({ params }: { params: Promise<{ id: str
       <Link href={listUrl(`/characters/${post.character}`, { type: post.type })}>{typeLabels[post.type]}</Link>
     </nav>
     <header>
-      <h1>{post.title}</h1>
+      <h1 className={styles.rule}>{post.title}</h1>
       <p className="muted">{post.author} · {new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(post.published_at))}
         {post.version && ` · Version ${post.version}`}{post.difficulty && ` · ${post.difficulty}`}</p>
       <p className="prose">{post.description}</p>
     </header>
     <PostBody post={post} />
+    <Discussion post={post} query={await searchParams} />
   </article>;
 }

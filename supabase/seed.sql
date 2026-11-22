@@ -21,3 +21,7 @@ insert into public.posts (id, author_id, character, type, title, description, bo
    '{"situation":"When an enemy starts a long attack animation.","steps":"Move out of range.\nWait for the hit.\nPunish the recovery.","notes":"Keep an escape option available."}', now() - interval '2 hours'),
   ('20000000-0000-4000-8000-000000000004','10000000-0000-4000-8000-000000000001','hakumen','speedrun','Practice run with a flexible route','A recorded practice route for a first timed run.',
    '{"category":"Any%","time":"00:18:42","route":"Choose the shortest safe path through each stage."}', now() - interval '3 hours');
+
+insert into public.comments (id, post_id, author_id, body)
+values ('30000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',
+        '10000000-0000-4000-8000-000000000002','Clean route, the corner carry is really good.');
