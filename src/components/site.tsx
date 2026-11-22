@@ -1,18 +1,26 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { signOut } from "@/app/sign-in/actions";
+import { currentUser } from "@/lib/auth";
 import { type Character, type Post, typeLabels } from "@/lib/demo";
 import styles from "./site.module.css";
 
-export function Header() {
+export async function Header() {
+  const user = await currentUser();
   const links = <><Link href="/characters">Characters</Link><Link href="/browse">Browse</Link></>;
-  const actions = <><Link href="/sign-in">Sign in</Link><Link href="/posts/new" className="button">Create post</Link></>;
+  const account = <><Link href="/my-posts">My posts</Link><form action={signOut}><button type="submit" className="button secondary">Sign out</button></form></>;
+  const create = <Link href="/posts/new" className="button">Create post</Link>;
   return <header className={styles.header}>
     <div className={`container ${styles.bar}`}>
       <Link href="/" className={styles.brand}>Entropy Hub</Link>
       <nav aria-label="Main navigation" className={`${styles.nav} ${styles.desktop}`}>{links}</nav>
-      <div className={`${styles.actions} ${styles.desktop}`}>{actions}</div>
+      <div className={`${styles.actions} ${styles.desktop}`}>
+        {user ? <details className={styles.account}><summary>Account</summary><div className="panel stack">{account}</div></details>
+          : <Link href="/sign-in">Sign in</Link>}
+        {create}
+      </div>
       <details className={styles.mobile} style={{ marginInlineStart: "auto" }}><summary>Menu</summary>
-        <nav aria-label="Mobile navigation">{links}{actions}</nav>
+        <nav aria-label="Mobile navigation">{links}{user ? account : <Link href="/sign-in">Sign in</Link>}{create}</nav>
       </details>
     </div>
   </header>;

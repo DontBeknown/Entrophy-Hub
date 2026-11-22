@@ -1,5 +1,5 @@
 .header { border-bottom: 1px solid var(--border); background: #15142b; }
-.bar { display:flex; align-items:center; min-height:68px; gap: 32px; }
+.bar { display:flex; align-items:center; min-height:68px; gap:32px; position:relative; }
 .brand { font: 1.6rem var(--display); color: var(--text); text-decoration:none; white-space:nowrap; }
 .brand::after { display:block; content:""; width:36px; height:4px; background:var(--accent); transform:skew(-22deg); margin-top:3px; }
 .nav { display:flex; gap:24px; align-items:center; }
@@ -7,7 +7,10 @@
 .actions { margin-inline-start:auto; display:flex; align-items:center; gap:16px; }
 .mobile { display:none; }
 .mobile summary { cursor:pointer; min-height:44px; display:flex; align-items:center; gap:8px; }
-.mobile nav { display:grid; gap:8px; padding-block:8px 16px; }
+.mobile nav, .account > div { display:grid; gap:8px; padding:12px; position:absolute; top:100%; inset-inline-end:0; min-width:180px; z-index:2; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
+.mobile nav a { display:flex; align-items:center; min-height:44px; }
+.account { position:relative; }
+.account > summary { cursor:pointer; padding:10px 0; }
 .hero { overflow:hidden; border-bottom:1px solid var(--border); isolation:isolate; position:relative; }
 .hero::before { content:""; position:absolute; z-index:-1; inset:0 0 0 25%; background: url("/entropy-hero.png") center / cover no-repeat #1b1539; }
 .hero::after { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,var(--page) 9%,#0f0f23 30%,transparent 80%); }
