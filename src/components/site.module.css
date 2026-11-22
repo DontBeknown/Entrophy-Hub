@@ -12,7 +12,7 @@
 .account { position:relative; }
 .account > summary { cursor:pointer; padding:10px 0; }
 .hero { overflow:hidden; border-bottom:1px solid var(--border); isolation:isolate; position:relative; }
-.hero::before { content:""; position:absolute; z-index:-1; inset:0 0 0 25%; background:url("/entropy-hero.webp") center / cover no-repeat #1b1539; }
+.heroArt { position:absolute; z-index:-1; inset:0 0 0 auto; width:75%; height:100%; object-fit:cover; object-position:center 24%; }
 .hero::after { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,var(--page) 9%,#0f0f23 30%,transparent 80%); }
 .heroInner { padding-block:64px; }
 .hero h1 { max-width:9em; font-size:clamp(2.5rem, 6vw, 4.5rem); }
@@ -40,6 +40,7 @@
   .desktop { display:none; }
   .mobile { display:block; }
   .heroInner { padding-block:42px; }
+  .heroArt { object-position:65% center; }
   .hero::after { background:linear-gradient(90deg,#0f0f23 8%,#0f0f23b0 68%,transparent); }
   .roster { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .poster { width:80px; }

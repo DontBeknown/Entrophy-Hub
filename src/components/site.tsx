@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { signOut } from "@/app/sign-in/actions";
 import { currentUser, hasModeratorAccess } from "@/lib/auth";
-import { type Character, type Post, typeLabels } from "@/lib/demo";
+import { characters, type Character, type Post, typeLabels } from "@/lib/demo";
 import { NavLinks } from "./nav-links";
 import styles from "./site.module.css";
 
@@ -47,8 +47,9 @@ export function CharacterGrid({ items }: { items: Character[] }) {
 }
 
 export function CharacterPortrait({ character, compact = false }: { character: Character; compact?: boolean }) {
-  if (character.portrait) {
-    return <Image className={styles.characterImage} src={character.portrait} alt="" width={450} height={290}
+  const portrait = character.portrait || characters.find(({ slug }) => slug === character.slug)?.portrait;
+  if (portrait) {
+    return <Image className={styles.characterImage} src={portrait} alt="" width={527} height={340}
       sizes={compact ? "84px" : "(max-width: 720px) 50vw, 300px"} />;
   }
   return <div className={styles.portrait} style={{ "--character-color": character.color } as CSSProperties} aria-hidden="true">
