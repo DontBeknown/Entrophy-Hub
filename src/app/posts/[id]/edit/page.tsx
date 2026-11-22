@@ -9,7 +9,7 @@ export default async function EditPost({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const user = await requireUser(`/posts/${id}/edit`);
   const [post, roster] = await Promise.all([getPost(id), getCharacters()]);
-  if (!post || post.author_id !== user || post.type === "speedrun") notFound();
+  if (!post || post.author_id !== user) notFound();
   return <div className="container page"><section className="narrow stack">
     <h1>Edit post</h1>
     <PostEditor roster={roster} post={post} />

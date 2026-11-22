@@ -43,6 +43,11 @@ label > :is(input,select,textarea) { margin-top:4px; }
 .category-tabs a[aria-current] { color:var(--focus); }
 .combo-layout { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start; }
 .post-video { display:block; max-width:840px; width:100%; aspect-ratio:16/9; border-radius:8px; background:#090819; }
+.media-player { position:relative; width:min(100%,840px); }
+.media-player-button { position:absolute; top:50%; left:50%; translate:-50% -50%; }
+fieldset { min-inline-size:0; }
+fieldset p { margin:0; }
+progress { width:100%; accent-color:var(--primary); }
 .input-sequence { display:grid; gap:8px; margin-block:0 20px; padding-inline-start:24px; }
 .input-sequence li { padding:8px 0; border-bottom:1px solid var(--border); }
 .keycaps { display:inline-flex; align-items:center; flex-wrap:wrap; gap:4px; margin-inline-start:8px; }

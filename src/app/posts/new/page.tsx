@@ -11,6 +11,6 @@ export default async function CreatePost({ searchParams }: { searchParams: Promi
   return <div className="container page"><section className="narrow stack">
     <h1>Create post</h1>
     <PostEditor roster={roster} initialCharacter={roster.some(({ slug }) => slug === character) ? character : ""}
-      initialType={type === "speedrun" ? "build" : type} />
+      initialType={type} />
   </section></div>;
 }

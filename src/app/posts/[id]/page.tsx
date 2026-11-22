@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { VideoPlayer } from "@/components/video-player";
 import { type Post, typeLabels } from "@/lib/demo";
 import { getCharacters, getPost, listUrl } from "@/lib/posts";
 
@@ -13,6 +14,7 @@ function BodySection({ title, value, ordered = false }: { title: string; value?:
 }
 
 function Video({ post }: { post: Post }) {
+  if (post.video) return <VideoPlayer postId={post.id} />;
   if (!post.demo_video) return null;
   return <video className="post-video" controls preload="none" poster="/entropy-hero.png" src="/demo-preview.webm" aria-label="Demo video preview" />;
 }

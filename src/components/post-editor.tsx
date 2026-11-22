@@ -4,6 +4,8 @@ import { useActionState, useState } from "react";
 import { savePost, type SaveResult } from "@/app/posts/actions";
 import { postTypes, type Character, type Post, type PostType } from "@/lib/demo";
 import { editorFields } from "@/lib/editor";
+import { isVideoType } from "@/lib/media";
+import { VideoUpload } from "./video-upload";
 
 const names: Record<PostType, string> = { build: "Build", tactic: "Tactic", combo: "Combo", speedrun: "Speedrun" };
 
@@ -12,6 +14,7 @@ export function PostEditor({ roster, post, initialCharacter = "", initialType = 
 }) {
   const [type, setType] = useState(post?.type ?? initialType);
   const [character, setCharacter] = useState(post?.character ?? initialCharacter);
+  const [attachment, setAttachment] = useState<{ path?: string; invalid: boolean; busy: boolean }>({ invalid: false, busy: false });
   const [values, setValues] = useState<Record<string, string>>({
     title: post?.title ?? "", description: post?.description ?? "",
     version: post?.version ?? "", difficulty: post?.difficulty ?? "",
@@ -25,8 +28,11 @@ export function PostEditor({ roster, post, initialCharacter = "", initialType = 
     } };
   }
   return <form action={action} className="stack">
-    <label>Post type<select name="type" value={type} disabled={Boolean(post)} onChange={(event) => setType(event.target.value as PostType)}>
-      {postTypes.filter((entry) => entry !== "speedrun").map((entry) => <option value={entry} key={entry}>{names[entry]}</option>)}
+    <label>Post type<select name="type" value={type} disabled={Boolean(post) || attachment.busy} onChange={(event) => {
+      setType(event.target.value as PostType);
+      setAttachment({ invalid: false, busy: false });
+    }}>
+      {postTypes.map((entry) => <option value={entry} key={entry}>{names[entry]}</option>)}
     </select></label>
     {post && <input type="hidden" name="type" value={type} />}
     <label>Character<select name="character" value={character} onChange={(event) => setCharacter(event.target.value)} required>
@@ -45,7 +51,9 @@ export function PostEditor({ roster, post, initialCharacter = "", initialType = 
     })}
     <label>Game version (optional)<input name="version" maxLength={80} {...valueProps("version")} /></label>
     <label>Difficulty (optional)<input name="difficulty" maxLength={80} {...valueProps("difficulty")} /></label>
+    {isVideoType(type) && <VideoUpload key={type} type={type} existing={Boolean(post?.video)} onChange={setAttachment} />}
+    {attachment.path && <input type="hidden" name="video" value={attachment.path} />}
     {result.error && <p role="alert">{result.error}</p>}
-    <button className="button" disabled={pending}>{post ? "Save changes" : "Publish post"}</button>
+    <button className="button" disabled={pending || attachment.busy || attachment.invalid}>{post ? "Save changes" : "Publish post"}</button>
   </form>;
 }
