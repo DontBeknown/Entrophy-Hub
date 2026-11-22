@@ -5,6 +5,7 @@ import { getDiscussion, type Comment } from "@/lib/discussion";
 import { param, type Query } from "@/lib/posts";
 import styles from "./site.module.css";
 import { CommentForm, ReactionForm } from "./discussion-forms";
+import { ReportForm } from "./report-forms";
 
 function CommentCard({ comment, children }: { comment: Comment; children?: React.ReactNode }) {
   const author = comment.body ? comment.profiles?.display_name || "Player" : "Removed comment";
@@ -32,6 +33,7 @@ export async function Discussion({ post, query }: { post: Post; query: Query }) 
           <Link className="button secondary" href={signInUrl(`${path}#reactions`)}>Like · {post.likes}</Link>
           <Link className="button secondary" href={signInUrl(`${path}#reactions`)}>Dislike · {post.dislikes}</Link>
         </div>}
+      {user ? <ReportForm postId={post.id} /> : <Link className="guest-report" href={signInUrl(`${path}#reactions`)}>Report post</Link>}
     </section>
     <section id="discussion" aria-labelledby="discussion-title" className="stack">
       <h2 id="discussion-title" className={styles.heading}>Discussion</h2>
@@ -43,9 +45,14 @@ export async function Discussion({ post, query }: { post: Post; query: Query }) 
           {comment.body && (user
             ? <details open={replyTo === comment.id || undefined}><summary>Reply</summary><CommentForm key={focus} postId={post.id} parentId={comment.id} /></details>
             : <Link href={signInUrl(`${path}?reply=${comment.id}#comment-${comment.id}`)}>Reply</Link>)}
+          {comment.body && (user ? <ReportForm postId={post.id} commentId={comment.id} />
+            : <Link className="guest-report" href={signInUrl(`${path}?comment=${comment.id}#comment-${comment.id}`)}>Report comment</Link>)}
         </CommentCard>
         {replies.filter(({ parent_id }) => parent_id === comment.id).map((reply) =>
-          <div key={reply.id} className="comment-reply"><CommentCard comment={reply} /></div>)}
+          <div key={reply.id} className="comment-reply"><CommentCard comment={reply}>
+            {reply.body && (user ? <ReportForm postId={post.id} commentId={reply.id} />
+              : <Link className="guest-report" href={signInUrl(`${path}?comment=${reply.id}#comment-${reply.id}`)}>Report comment</Link>)}
+          </CommentCard></div>)}
       </div>)}
       {(page > 1 || more) && <nav className="row" aria-label="Discussion pages">
         {page > 1 && <Link href={`${path}?discussion=${page - 1}#discussion`}>Newer comments</Link>}

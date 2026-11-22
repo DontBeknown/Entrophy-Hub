@@ -1,14 +1,17 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { signOut } from "@/app/sign-in/actions";
-import { currentUser } from "@/lib/auth";
+import { currentUser, hasModeratorAccess } from "@/lib/auth";
 import { type Character, type Post, typeLabels } from "@/lib/demo";
 import styles from "./site.module.css";
 
 export async function Header() {
   const user = await currentUser();
+  const moderator = user && await hasModeratorAccess();
   const links = <><Link href="/characters">Characters</Link><Link href="/browse">Browse</Link></>;
-  const account = <><Link href="/my-posts">My posts</Link><form action={signOut}><button type="submit" className="button secondary">Sign out</button></form></>;
+  const account = <><Link href="/my-posts">My posts</Link>
+    {moderator && <Link href="/moderator/reports">Moderator reports</Link>}
+    <form action={signOut}><button type="submit" className="button secondary">Sign out</button></form></>;
   const create = <Link href="/posts/new" className="button">Create post</Link>;
   return <header className={styles.header}>
     <div className={`container ${styles.bar}`}>

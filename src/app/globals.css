@@ -53,6 +53,11 @@ progress { width:100%; accent-color:var(--primary); }
 .comment-reply { margin-inline-start:clamp(8px,4vw,32px); }
 .comment summary { cursor:pointer; min-height:44px; padding-block:10px; }
 .comment form { margin-block-start:8px; }
+.report-form { margin-block:4px; width:min(100%,34rem); }
+.report-form summary { cursor:pointer; min-height:44px; padding-block:10px; }
+.guest-report { display:inline-flex; align-items:center; min-height:44px; margin-inline-end:12px; color:var(--muted); }
+dialog { width:min(calc(100% - 32px),480px); }
+dialog::backdrop { background:#090817bf; }
 .input-sequence { display:grid; gap:8px; margin-block:0 20px; padding-inline-start:24px; }
 .input-sequence li { padding:8px 0; border-bottom:1px solid var(--border); }
 .keycaps { display:inline-flex; align-items:center; flex-wrap:wrap; gap:4px; margin-inline-start:8px; }

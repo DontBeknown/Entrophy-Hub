@@ -25,3 +25,10 @@ export async function requireUser(next: string) {
   if (!user) redirect(signInUrl(next));
   return user;
 }
+
+export const hasModeratorAccess = cache(async () => {
+  if (!(await currentUser())) return false;
+  const db = await database();
+  const result = await db?.rpc("is_moderator");
+  return result?.data === true;
+});
