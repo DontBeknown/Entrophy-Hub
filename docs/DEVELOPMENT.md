@@ -12,13 +12,13 @@ pnpm dlx supabase@3.2.0 start
 pnpm dlx supabase@3.2.0 status
 ```
 
-Copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` from the local Supabase status output. The secret key is server-only. Keep `NEXT_PUBLIC_APP_URL=http://localhost:3000` for the default dev server, and open the app at that exact hostname so the email callback can read the sign-up session. Leave `NEXT_PUBLIC_SUPABASE_STORAGE_URL` empty for the local stack.
+Copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` from the local Supabase status output. The secret key is server-only. Keep `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000` for the default dev server. Use the exact URL configured in `NEXT_PUBLIC_APP_URL` when signing up so the browser sends the signup cookie to the confirmation callback. Leave `NEXT_PUBLIC_SUPABASE_STORAGE_URL` empty for the local stack.
 
 ```sh
 pnpm dev
 ```
 
-Open [Entropy Hub](http://localhost:3000) and [Mailpit](http://127.0.0.1:54324) to confirm local sign-ups. Without Supabase configuration, the public pages use demo fixtures and account features are unavailable.
+Open [Entropy Hub](http://127.0.0.1:3000) and [Mailpit](http://127.0.0.1:54324) in the same browser profile to confirm local sign-ups. If the confirmation link reports an error, try signing in with your password. Supabase may have already confirmed the address before the app could start your session. Without Supabase configuration, the public pages use demo fixtures and account features are unavailable.
 
 ## Verification
 
